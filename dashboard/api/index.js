@@ -1,46 +1,20 @@
-import { ExpressAuth, getSession } from '@auth/express';
-import Google from '@auth/express/providers/google';
 import express from 'express';
 import 'dotenv/config';
-import SequelizeAdapter from '@auth/sequelize-adapter';
-import { Sequelize } from 'sequelize';
-
-const sequelize = new Sequelize({
-  dialect: 'mysql',
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
+import sequelize from './db/db.js';
+import './models/event.js';
+import './models/report.js';
+import bodyParser from 'body-parser';
+import WebsiteRouter from './routes/websites.js';
+import AuthRouter from './routes/auth.js';
 
 const app = express();
 
-const authConfig = {
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-  adapter: SequelizeAdapter(sequelize),
-};
+app.use(bodyParser.json());
 
-// If app is served through a proxy, trust the proxy to allow HTTPS protocol to be detected
-// https://expressjs.com/en/guide/behind-proxies.html
+sequelize.sync();
 app.set('trust proxy', true);
-app.use('/api/auth/*', ExpressAuth(authConfig));
-
-export async function authSession(req, res, next) {
-  res.locals.session = await getSession(req, authConfig);
-  next();
-}
-
-app.use(authSession);
-
-app.get('/api/session', (req, res) => {
-  res.json(res.locals.session || {});
-});
+app.use(AuthRouter);
+app.use(WebsiteRouter);
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

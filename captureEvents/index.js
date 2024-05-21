@@ -1,5 +1,15 @@
 const amqp = require('amqplib/callback_api');
 
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
+const app = express();
+
+app.use(bodyParser.json());
+
+app.use(cors());
+
 amqp.connect(
   'amqps://ofsrnljx:b8E5UbvcIfR365JuOsDLmxfR30Y97yVU@beaver.rmq.cloudamqp.com/ofsrnljx',
   function (error0, connection) {
@@ -10,6 +20,9 @@ amqp.connect(
       if (error1) {
         throw error1;
       }
+
+      console.log('Connected to RabbitMQ');
+
       const queue = 'events';
       const msg = 'Hello world';
 
@@ -17,10 +30,29 @@ amqp.connect(
         durable: true,
       });
 
-      channel.sendToQueue(queue, Buffer.from(msg));
-      console.log(' [x] Sent %s', msg);
+      app.post('/event', (req, res) => {
+        const { type, userAgent, ip, browserId, websiteId } = req.body;
+        const event = {
+          type,
+          userAgent,
+          ip,
+          browserId,
+          websiteId,
+          createdAt: new Date(),
+        };
+        channel.sendToQueue(queue, Buffer.from(JSON.stringify(event)));
 
-      connection.close();
+        console.log(' [x] Sent %s', JSON.stringify(event));
+        res.send('Event sent');
+      });
+
+      process.on('beforeExit', () => {
+        connection.close();
+      });
     });
   }
 );
+
+app.listen(3001, () => {
+  console.log('Server is running on port 3001');
+});

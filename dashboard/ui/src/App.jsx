@@ -20,6 +20,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './components/common/menuItems';
 import AddWebsite from './components/websites/addWebsite/addWebsite';
 import AllWebsites from './components/websites/allWebsites/allWebsites';
+import Chart from './components/reports/chart';
 // import { mainListItems, secondaryListItems } from './listItems';
 // import Chart from './Chart';
 // import Deposits from './Deposits';
@@ -214,21 +215,13 @@ export default function Dashboard() {
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 240,
+                    height: '100%',
                   }}
                 >
                   <AllWebsites />
                 </Paper>
               </Grid>
               {/* Recent Orders */}
-              <Grid
-                item
-                xs={12}
-              >
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  {/* <Orders /> */}
-                </Paper>
-              </Grid>
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>

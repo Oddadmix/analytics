@@ -17,7 +17,7 @@ type,
 
 */
 
-const URL = `http://localhost:3001/event`;
+const URL = import.meta.env.VITE_EVENTS_URL;
 
 const TYPE_MAPPING = {
   click: 1,

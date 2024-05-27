@@ -10,7 +10,11 @@ export default function SingleWebsite({ website }) {
       <h2>{website.url}</h2>
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
         <textarea
-          value={`<script type="text/javascript">const WEBSITE_ID="${website.id}";</script><script type="text/javascript" src="http://localhost:3002/assets/index.js"></script>`}
+          value={`<script type="text/javascript">const WEBSITE_ID="${
+            website.id
+          }";</script><script type="text/javascript" src="${
+            import.meta.env.VITE_SCRIPT_URL
+          }"></script>`}
         ></textarea>
       </Paper>
       <Paper sx={{ p: 2, m: 1, display: 'flex', flexDirection: 'column' }}>
